@@ -1,6 +1,5 @@
 package de.cau.se;
 
-
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
@@ -30,12 +29,11 @@ public class DataSources {
                 new Event("c3", "a3", "n1", "group"),
                 new Event("c3", "a4", "n1", "group"),
                 new Event("c4", "a2", "n1", "group"),
-                new Event("c4", "a3", "n1", "group")
-        );
+                new Event("c4", "a3", "n1", "group"));
     }
 
     public DataStreamSource<Event> getProbabilisticDataStream() {
-        return env.addSource(new ProbabilisticEventSource(1000, List.of("a1", "a2", "a3"), 0.2));
+        return env.addSource(new ProbabilisticEventSource(0, List.of("A", "B", "C", "D"), 0.3, 10000));
     }
 
 }

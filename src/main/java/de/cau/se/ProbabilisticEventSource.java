@@ -20,10 +20,16 @@ public class ProbabilisticEventSource extends RichParallelSourceFunction<Event> 
 
     private final double newCaseProbability;
 
-    public ProbabilisticEventSource(long pause, final List<String> possibleActivities, final double newCaseProbability) {
+    private final int maxEvents; // Maximum number of events to generate
+
+    private int eventCount = 0;
+
+    public ProbabilisticEventSource(long pause, final List<String> possibleActivities, final double newCaseProbability,
+            int maxEvents) {
         this.pause = pause;
         this.possibleActivities = possibleActivities;
         this.newCaseProbability = newCaseProbability;
+        this.maxEvents = maxEvents; // Set the maximum number of events
     }
 
     @Override
@@ -32,10 +38,11 @@ public class ProbabilisticEventSource extends RichParallelSourceFunction<Event> 
     }
 
     public void run(SourceContext<Event> sourceContext) throws Exception {
-        while (running) {
+        while (running && eventCount < maxEvents) {
             String activity = possibleActivities.get((int) (random.nextDouble() * possibleActivities.size()));
             final Event event = new Event("c" + currentCase, activity, "n1", "g1");
             sourceContext.collect(event);
+            eventCount++;
             if (random.nextDouble() > 1 - newCaseProbability) {
                 this.currentCase++;
             }
